@@ -162,7 +162,7 @@ export default class EverflowSDK {
                     .then((response) => response.json(),
                         (error) => {
                             console.error(error);
-                            resolve("")
+                            reject(error);
                         })
                     .then((response) => {
                         if (response.transaction_id && response.transaction_id.length > 0) {
@@ -171,7 +171,12 @@ export default class EverflowSDK {
                             const tidAdv = this._fetch(`ef_tid_i_a_${response.aid}`);
                             this._persist(`ef_tid_i_a_${response.aid}`, tidAdv && tidAdv.length > 0 ? `${tidAdv}|${response.transaction_id}` : response.transaction_id);
                             resolve(response.transaction_id);
+                        } else {
+                            reject('empty transaction id');
                         }
+                    })
+                    .catch(err => {
+                        reject(err);
                     })
             });
         });
@@ -292,7 +297,7 @@ export default class EverflowSDK {
                     .then((response) => response.json(),
                         (error) => {
                             console.error(error);
-                            resolve("");
+                            reject(error);
                         })
                     .then((response) => {
                         if (response.transaction_id && response.transaction_id.length > 0) {
@@ -301,7 +306,12 @@ export default class EverflowSDK {
                             const tidAdv = this._fetch(`ef_tid_c_a_${response.aid}`);
                             this._persist(`ef_tid_c_a_${response.aid}`, tidAdv && tidAdv.length > 0 ? `${tidAdv}|${response.transaction_id}` : response.transaction_id);
                             resolve(response.transaction_id);
+                        } else {
+                            reject('empty transaction id');
                         }
+                    })
+                    .catch(err => {
+                        reject(err);
                     })
             });
         });
@@ -483,8 +493,8 @@ export default class EverflowSDK {
                         resolve({ transaction_id: response.transaction_id, conversion_id: response.conversion_id });
                     })
                     .catch((err) => {
-                        console.log(err);
-                        resolve({ conversion_id: '', transaction_id: '', html_pixel: '' });
+                        // resolve({ conversion_id: '', transaction_id: '', html_pixel: '' });
+                        reject(err);
                     })
             });
         });
